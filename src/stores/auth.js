@@ -56,6 +56,7 @@ export async function login(username, password) {
 
 export async function logout() {
   await supabase.auth.signOut()
+  currentUser.value = null
 }
 
 // Admin only: Add a new user using an isolated client so it doesn't log the admin out

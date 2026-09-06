@@ -104,9 +104,9 @@ const roleLabel = computed(() => {
   return currentUser.value?.role || ''
 })
 
-function handleLogout() {
-  logout()
-  router.push('/login')
+async function handleLogout() {
+  await logout()
+  window.location.href = '/login'
 }
 </script>
 
