@@ -2,37 +2,55 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { formatCurrency, formatShortDate } from './formatters.js'
 
-const LOGO_PLACEHOLDER = null // can be replaced with base64 logo
+async function getLogoBase64() {
+  try {
+    const res = await fetch('/logo.png')
+    const blob = await res.blob()
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result)
+      reader.readAsDataURL(blob)
+    })
+  } catch (e) {
+    return null
+  }
+}
 
-function addLetterhead(doc, subtitle = '') {
+async function addLetterhead(doc, subtitle = '') {
   const pageWidth = doc.internal.pageSize.getWidth()
 
-  // Header background
-  doc.setFillColor(26, 35, 126) // dark blue
-  doc.rect(0, 0, pageWidth, 40, 'F')
+  // Logo
+  const logoBase64 = await getLogoBase64()
+  if (logoBase64) {
+    doc.addImage(logoBase64, 'PNG', 14, 10, 26, 26)
+  }
 
   // Title
-  doc.setTextColor(255, 255, 255)
+  doc.setTextColor(20, 20, 20)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text('UNIVERSITAS GUNADARMA', pageWidth / 2, 14, { align: 'center' })
+  doc.text('UNIVERSITAS GUNADARMA', pageWidth / 2, 16, { align: 'center' })
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.text('Sistem Manajemen Kas Kelas | Kelas 3KA25', pageWidth / 2, 22, { align: 'center' })
+  doc.text('Sistem Manajemen Kas Kelas — Kelas 3KA25', pageWidth / 2, 23, { align: 'center' })
 
   doc.setFontSize(10)
+  doc.setFont('helvetica', 'italic')
   if (subtitle) {
     doc.text(subtitle, pageWidth / 2, 30, { align: 'center' })
   }
 
-  // Divider line
-  doc.setDrawColor(79, 70, 229)
+  // Divider lines (Kop Surat style: thick line + thin line)
+  doc.setDrawColor(0, 0, 0)
   doc.setLineWidth(1)
-  doc.line(0, 40, pageWidth, 40)
+  doc.line(14, 38, pageWidth - 14, 38)
+  doc.setLineWidth(0.3)
+  doc.line(14, 39.5, pageWidth - 14, 39.5)
 
   // Reset color
   doc.setTextColor(30, 30, 30)
+  doc.setFont('helvetica', 'normal')
 
   return 50 // return Y position after header
 }
@@ -52,17 +70,17 @@ function addFooter(doc) {
   }
 }
 
-export function exportTransactionsToPDF(transactions, accounts, categories, filterLabel = '') {
+export async function exportTransactionsToPDF(transactions, accounts, categories, filterLabel = '') {
   const doc = new jsPDF()
   const subtitle = `Laporan Transaksi${filterLabel ? ' — ' + filterLabel : ''}`
-  const startY = addLetterhead(doc, subtitle)
+  const startY = await addLetterhead(doc, subtitle)
 
   // Summary box
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
 
-  doc.setFontSize(9)
-  doc.setTextColor(60, 60, 60)
+  doc.setFontSize(10)
+  doc.setTextColor(40, 40, 40)
   doc.text(`Total Pemasukan: ${formatCurrency(totalIncome)}`, 14, startY + 2)
   doc.text(`Total Pengeluaran: ${formatCurrency(totalExpense)}`, 14, startY + 8)
   doc.text(`Saldo Bersih: ${formatCurrency(totalIncome - totalExpense)}`, 14, startY + 14)
@@ -85,9 +103,9 @@ export function exportTransactionsToPDF(transactions, accounts, categories, filt
     startY: startY + 22,
     head: [['No', 'Tanggal', 'Keterangan', 'Rekening', 'Kategori', 'Jenis', 'Jumlah']],
     body: tableData,
-    styles: { fontSize: 8, cellPadding: 3 },
-    headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold' },
-    alternateRowStyles: { fillColor: [245, 245, 255] },
+    theme: 'grid',
+    styles: { fontSize: 8, cellPadding: 3, lineColor: [200, 200, 200], lineWidth: 0.1 },
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
     columnStyles: {
       0: { cellWidth: 10 },
       1: { cellWidth: 24 },
@@ -100,9 +118,9 @@ export function exportTransactionsToPDF(transactions, accounts, categories, filt
     didParseCell(data) {
       if (data.column.index === 5 && data.section === 'body') {
         if (data.cell.raw === 'Pengeluaran') {
-          data.cell.styles.textColor = [239, 68, 68]
+          data.cell.styles.textColor = [220, 38, 38]
         } else {
-          data.cell.styles.textColor = [16, 185, 129]
+          data.cell.styles.textColor = [5, 150, 105]
         }
       }
     }
@@ -112,10 +130,10 @@ export function exportTransactionsToPDF(transactions, accounts, categories, filt
   doc.save(`Laporan_Kas_3KA25_${new Date().toISOString().split('T')[0]}.pdf`)
 }
 
-export function exportReportToPDF(data, label = '') {
+export async function exportReportToPDF(data, label = '') {
   const doc = new jsPDF()
-  const subtitle = `Laporan Keuangan | ${label}`
-  let startY = addLetterhead(doc, subtitle)
+  const subtitle = `Laporan Keuangan${label ? ' | ' + label : ''}`
+  let startY = await addLetterhead(doc, subtitle)
 
   // Summary section
   doc.setFontSize(11)
@@ -130,16 +148,16 @@ export function exportReportToPDF(data, label = '') {
       ['Total Pengeluaran', formatCurrency(data.totalExpense)],
       ['Saldo Bersih', formatCurrency(data.totalIncome - data.totalExpense)],
     ],
-    styles: { fontSize: 10, cellPadding: 4 },
+    styles: { fontSize: 10, cellPadding: 4, lineColor: [200, 200, 200], lineWidth: 0.1 },
     columnStyles: {
       0: { fontStyle: 'bold', cellWidth: 80 },
       1: { halign: 'right' }
     },
     theme: 'grid',
-    headStyles: { fillColor: [79, 70, 229] },
+    headStyles: { fillColor: [245, 245, 245] },
     didParseCell(data) {
-      if (data.row.index === 1 && data.column.index === 1) data.cell.styles.textColor = [239, 68, 68]
-      if (data.row.index === 0 && data.column.index === 1) data.cell.styles.textColor = [16, 185, 129]
+      if (data.row.index === 1 && data.column.index === 1) data.cell.styles.textColor = [220, 38, 38]
+      if (data.row.index === 0 && data.column.index === 1) data.cell.styles.textColor = [5, 150, 105]
     }
   })
 
@@ -147,14 +165,16 @@ export function exportReportToPDF(data, label = '') {
   startY = doc.lastAutoTable.finalY + 10
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 30, 30)
   doc.text('SALDO PER REKENING', 14, startY)
 
   autoTable(doc, {
     startY: startY + 5,
     head: [['Rekening', 'Saldo']],
     body: data.accounts.map(a => [a.name, formatCurrency(a.balance)]),
-    styles: { fontSize: 9, cellPadding: 3 },
-    headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+    theme: 'grid',
+    styles: { fontSize: 9, cellPadding: 3, lineColor: [200, 200, 200], lineWidth: 0.1 },
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
     columnStyles: { 1: { halign: 'right' } }
   })
 
@@ -162,6 +182,7 @@ export function exportReportToPDF(data, label = '') {
   startY = doc.lastAutoTable.finalY + 10
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 30, 30)
   doc.text('DETAIL TRANSAKSI', 14, startY)
 
   const tableData = data.transactions.map((t, i) => {
@@ -182,9 +203,9 @@ export function exportReportToPDF(data, label = '') {
     startY: startY + 5,
     head: [['No', 'Tanggal', 'Keterangan', 'Rekening', 'Kategori', 'Jenis', 'Jumlah']],
     body: tableData,
-    styles: { fontSize: 8, cellPadding: 2 },
-    headStyles: { fillColor: [79, 70, 229], textColor: 255 },
-    alternateRowStyles: { fillColor: [245, 245, 255] },
+    theme: 'grid',
+    styles: { fontSize: 8, cellPadding: 2, lineColor: [200, 200, 200], lineWidth: 0.1 },
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
     columnStyles: {
       0: { cellWidth: 10 },
       1: { cellWidth: 22 },
@@ -194,16 +215,25 @@ export function exportReportToPDF(data, label = '') {
       5: { cellWidth: 22 },
       6: { cellWidth: 26, halign: 'right' },
     },
+    didParseCell(data) {
+      if (data.column.index === 5 && data.section === 'body') {
+        if (data.cell.raw === 'Pengeluaran') {
+          data.cell.styles.textColor = [220, 38, 38]
+        } else {
+          data.cell.styles.textColor = [5, 150, 105]
+        }
+      }
+    }
   })
 
   addFooter(doc)
   doc.save(`Laporan_Keuangan_3KA25_${new Date().toISOString().split('T')[0]}.pdf`)
 }
 
-export function exportDebtToPDF(debts, label = '') {
+export async function exportDebtToPDF(debts, label = '') {
   const doc = new jsPDF()
   const subtitle = `Laporan Hutang & Piutang${label ? ' — ' + label : ''}`
-  const startY = addLetterhead(doc, subtitle)
+  const startY = await addLetterhead(doc, subtitle)
 
   const receivable = debts.filter(d => d.type === 'receivable')
   const payable = debts.filter(d => d.type === 'payable')
@@ -220,43 +250,48 @@ export function exportDebtToPDF(debts, label = '') {
     styles: { fontSize: 10, cellPadding: 4 },
     columnStyles: { 0: { fontStyle: 'bold', cellWidth: 80 }, 1: { halign: 'right' } },
     theme: 'grid',
+    headStyles: { fillColor: [245, 245, 245] }
   })
 
   // Piutang table
   let y = doc.lastAutoTable.finalY + 10
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 30, 30)
   doc.text('PIUTANG (Yang Harus Diterima)', 14, y)
 
   autoTable(doc, {
     startY: y + 5,
     head: [['Nama', 'Keterangan', 'Jumlah', 'Jatuh Tempo', 'Status']],
     body: receivable.map(d => [d.name, d.description, formatCurrency(d.amount), formatShortDate(d.dueDate), d.status === 'paid' ? 'Lunas' : 'Belum Lunas']),
-    headStyles: { fillColor: [16, 185, 129], textColor: 255 },
-    styles: { fontSize: 9 },
+    theme: 'grid',
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
+    styles: { fontSize: 9, lineColor: [200, 200, 200], lineWidth: 0.1 },
   })
 
   // Hutang table
   y = doc.lastAutoTable.finalY + 10
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 30, 30)
   doc.text('HUTANG (Yang Harus Dibayar)', 14, y)
 
   autoTable(doc, {
     startY: y + 5,
     head: [['Nama', 'Keterangan', 'Jumlah', 'Jatuh Tempo', 'Status']],
     body: payable.map(d => [d.name, d.description, formatCurrency(d.amount), formatShortDate(d.dueDate), d.status === 'paid' ? 'Lunas' : 'Belum Lunas']),
-    headStyles: { fillColor: [239, 68, 68], textColor: 255 },
-    styles: { fontSize: 9 },
+    theme: 'grid',
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
+    styles: { fontSize: 9, lineColor: [200, 200, 200], lineWidth: 0.1 },
   })
 
   addFooter(doc)
   doc.save(`Laporan_HutangPiutang_3KA25_${new Date().toISOString().split('T')[0]}.pdf`)
 }
 
-export function exportRekapToPDF(rekapAnggota) {
+export async function exportRekapToPDF(rekapAnggota) {
   const doc = new jsPDF()
-  const startY = addLetterhead(doc, 'Laporan Rekapitulasi Saldo Anggota')
+  const startY = await addLetterhead(doc, 'Laporan Rekapitulasi Saldo Anggota')
 
   let totalSetoran = 0
   let totalPenarikan = 0
@@ -287,8 +322,9 @@ export function exportRekapToPDF(rekapAnggota) {
     startY: startY + 5,
     head: [['No', 'Nama Anggota', 'Total Setoran', 'Total Penarikan', 'Sisa Saldo Kas']],
     body: tableData,
-    styles: { fontSize: 9, cellPadding: 3 },
-    headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+    theme: 'grid',
+    styles: { fontSize: 9, cellPadding: 3, lineColor: [200, 200, 200], lineWidth: 0.1 },
+    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
     columnStyles: {
       0: { cellWidth: 10 },
       1: { cellWidth: 60 },
@@ -299,11 +335,11 @@ export function exportRekapToPDF(rekapAnggota) {
     didParseCell(data) {
       if (data.row.index === tableData.length - 1 && data.section === 'body') {
         data.cell.styles.fontStyle = 'bold'
-        data.cell.styles.fillColor = [245, 245, 255]
+        data.cell.styles.fillColor = [245, 245, 245]
       }
     }
   })
 
   addFooter(doc)
-  doc.save(`Rekap_Anggota_3KA25_${new Date().toISOString().split('T')[0]}.pdf`)
+  doc.save(`Laporan_Rekap_Anggota_3KA25_${new Date().toISOString().split('T')[0]}.pdf`)
 }
