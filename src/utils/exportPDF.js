@@ -33,7 +33,7 @@ async function addLetterhead(doc, subtitle = '') {
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.text('Sistem Manajemen Kas Kelas — Kelas 3KA25', pageWidth / 2, 23, { align: 'center' })
+  doc.text('Sistem Manajemen Kas Kelas', pageWidth / 2, 23, { align: 'center' })
 
   doc.setFontSize(10)
   doc.setFont('helvetica', 'italic')
@@ -114,15 +114,6 @@ export async function exportTransactionsToPDF(transactions, accounts, categories
       4: { cellWidth: 24 },
       5: { cellWidth: 22 },
       6: { cellWidth: 26, halign: 'right' },
-    },
-    didParseCell(data) {
-      if (data.column.index === 5 && data.section === 'body') {
-        if (data.cell.raw === 'Pengeluaran') {
-          data.cell.styles.textColor = [220, 38, 38]
-        } else {
-          data.cell.styles.textColor = [5, 150, 105]
-        }
-      }
     }
   })
 
@@ -154,28 +145,7 @@ export async function exportReportToPDF(data, label = '') {
       1: { halign: 'right' }
     },
     theme: 'grid',
-    headStyles: { fillColor: [245, 245, 245] },
-    didParseCell(data) {
-      if (data.row.index === 1 && data.column.index === 1) data.cell.styles.textColor = [220, 38, 38]
-      if (data.row.index === 0 && data.column.index === 1) data.cell.styles.textColor = [5, 150, 105]
-    }
-  })
-
-  // Accounts
-  startY = doc.lastAutoTable.finalY + 10
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(30, 30, 30)
-  doc.text('SALDO PER REKENING', 14, startY)
-
-  autoTable(doc, {
-    startY: startY + 5,
-    head: [['Rekening', 'Saldo']],
-    body: data.accounts.map(a => [a.name, formatCurrency(a.balance)]),
-    theme: 'grid',
-    styles: { fontSize: 9, cellPadding: 3, lineColor: [200, 200, 200], lineWidth: 0.1 },
-    headStyles: { fillColor: [245, 245, 245], textColor: 30, fontStyle: 'bold' },
-    columnStyles: { 1: { halign: 'right' } }
+    headStyles: { fillColor: [245, 245, 245] }
   })
 
   // Transactions
@@ -214,15 +184,6 @@ export async function exportReportToPDF(data, label = '') {
       4: { cellWidth: 22 },
       5: { cellWidth: 22 },
       6: { cellWidth: 26, halign: 'right' },
-    },
-    didParseCell(data) {
-      if (data.column.index === 5 && data.section === 'body') {
-        if (data.cell.raw === 'Pengeluaran') {
-          data.cell.styles.textColor = [220, 38, 38]
-        } else {
-          data.cell.styles.textColor = [5, 150, 105]
-        }
-      }
     }
   })
 
