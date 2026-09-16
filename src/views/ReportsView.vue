@@ -496,7 +496,7 @@ function doExportPDF() {
 
 .count-badge { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; color: var(--color-text-muted); }
 
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; white-space: nowrap; }
 .data-table th { text-align: left; padding: 10px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--color-text-dim); background: var(--color-surface-2); border-bottom: 1px solid var(--color-border); }
 .data-table td { padding: 11px 16px; border-bottom: 1px solid var(--color-border); }
 .data-table tr:last-child td { border-bottom: none; }
@@ -564,97 +564,33 @@ function doExportPDF() {
     flex: unset;
   }
 
-  /* ---- BUKU KAS TABLE → Card list di mobile ---- */
-  /* Sembunyikan thead tabel buku kas */
-  .table-responsive table.data-table thead {
-    display: none;
-  }
-
-  /* Setiap baris jadi card */
-  .table-responsive table.data-table,
-  .table-responsive table.data-table tbody,
-  .table-responsive table.data-table tr {
+  /* Tabel: horizontal scroll, tidak ada yang terpotong */
+  .table-responsive {
     display: block;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
   }
 
-  .table-responsive table.data-table tbody tr {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    margin-bottom: 10px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .table-responsive table.data-table tbody tr:last-child {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  /* Sembunyikan semua td dulu, tampilkan per kolom secara manual */
-  .table-responsive table.data-table tbody td {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 0;
-    border-bottom: none;
-    font-size: 0.875rem;
-    white-space: normal !important;
-    word-break: break-word;
-  }
-
-  /* Label sebelum setiap td via data-label (ditambah di bawah) */
-  .table-responsive table.data-table tbody td::before {
-    content: attr(data-label);
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: var(--color-text-dim);
+  .table-responsive table.data-table {
+    min-width: 600px; /* pastikan tabel cukup lebar agar bisa discroll */
     white-space: nowrap;
-    min-width: 80px;
-    padding-top: 2px;
   }
 
-  /* td yang tidak punya data-label: tidak tampilkan label kosong */
-  .table-responsive table.data-table tbody td[data-label=""] {
-    display: none;
+  /* Tabel rekap anggota butuh lebih lebar */
+  .table-responsive table.data-table.rekap-table {
+    min-width: 520px;
   }
 
-  /* Khusus kolom empty-cell: tetap tampil normal */
-  .table-responsive table.data-table tbody td.empty-cell {
-    display: block;
-    text-align: center;
-    padding: 24px;
-  }
-  .table-responsive table.data-table tbody td.empty-cell::before {
-    display: none;
-  }
-
-  /* Nominal: rata kanan tetap tapi sekarang dalam flex row */
-  .table-responsive table.data-table tbody td[style*="text-align:right"] {
-    text-align: left !important;
-  }
-
-  /* tfoot: sembunyikan di mobile */
-  .table-responsive table.data-table tfoot {
-    display: none;
-  }
-
-  /* Padding card-nya diperkecil */
+  /* Padding card diperkecil */
   .card {
-    padding: 14px;
-  }
-
-  .card-header {
-    margin-bottom: 12px;
+    padding: 14px 10px;
   }
 
   /* Main tabs: font lebih kecil di mobile */
   .m-tab {
-    padding: 10px 12px;
+    padding: 10px 10px;
     font-size: 0.82rem;
   }
 }
