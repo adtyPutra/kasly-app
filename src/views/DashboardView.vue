@@ -104,9 +104,9 @@
         <table class="simple-table">
           <thead>
             <tr>
-              <th style="text-align:center;">Nama</th>
-              <th style="text-align:center;">Periode</th>
-              <th style="text-align:center;">Nominal</th>
+              <th>Nama</th>
+              <th>Periode</th>
+              <th style="text-align:right;">Nominal</th>
               <th style="text-align:center;">Status</th>
             </tr>
           </thead>
@@ -114,7 +114,7 @@
             <tr v-for="m in unpaidMembers.slice(0, 5)" :key="m.id">
               <td class="fw-medium">{{ m.nama }}</td>
               <td class="text-muted">{{ latestPeriodName }}</td>
-              <td style="text-align:center;">{{ formatCurrency(latestPeriodNominal) }}</td>
+              <td style="text-align:right;">{{ formatCurrency(latestPeriodNominal) }}</td>
               <td style="text-align:center;"><span class="badge-status belum">Belum Bayar</span></td>
             </tr>
           </tbody>
