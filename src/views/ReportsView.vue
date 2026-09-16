@@ -121,11 +121,11 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Tanggal</th>
-                <th>Keterangan</th>
-                <th>Jenis</th>
-                <th>Kategori</th>
-                <th style="text-align:right;">Nominal</th>
+                <th style="text-align:center;">Tanggal</th>
+                <th style="text-align:center;">Keterangan</th>
+                <th style="text-align:center;">Jenis</th>
+                <th style="text-align:center;">Kategori</th>
+                <th style="text-align:center;">Nominal</th>
               </tr>
             </thead>
             <tbody>
