@@ -133,11 +133,11 @@
                 <td colspan="5" class="empty-cell">Tidak ada transaksi untuk periode ini.</td>
               </tr>
               <tr v-for="t in filteredTxns" :key="t.id">
-                <td data-label="Tanggal" class="text-muted small">{{ formatShortDate(t.date) }}</td>
-                <td data-label="Keterangan">{{ t.description }}</td>
-                <td data-label="Jenis"><span class="badge-type" :class="t.type === 'income' ? 'in' : 'out'">{{ t.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</span></td>
-                <td data-label="Kategori" class="text-muted small">{{ getCategoryName(t.categoryId) }}</td>
-                <td data-label="Nominal" class="fw-bold" :class="t.type === 'income' ? 'amount-in' : 'amount-out'">
+                <td data-label="Tanggal" style="text-align:center;" class="text-muted small">{{ formatShortDate(t.date) }}</td>
+                <td data-label="Keterangan" style="text-align:center;">{{ t.description }}</td>
+                <td data-label="Jenis" style="text-align:center;"><span class="badge-type" :class="t.type === 'income' ? 'in' : 'out'">{{ t.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</span></td>
+                <td data-label="Kategori" style="text-align:center;" class="text-muted small">{{ getCategoryName(t.categoryId) }}</td>
+                <td data-label="Nominal" style="text-align:center;" class="fw-bold" :class="t.type === 'income' ? 'amount-in' : 'amount-out'">
                   {{ t.type === 'income' ? '+' : '-' }}{{ formatCurrency(t.amount) }}
                 </td>
               </tr>
