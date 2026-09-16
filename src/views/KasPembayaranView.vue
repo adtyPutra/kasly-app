@@ -879,16 +879,17 @@ async function cancelPayment(paymentId, periodName) {
   background: var(--color-surface);
   cursor: pointer;
   transition: all 0.2s;
+  gap: 8px;
 }
 .period-checkbox-card:hover { border-color: var(--color-success); }
 .period-checkbox-card.selected {
   background: rgba(16, 185, 129, 0.05);
   border-color: var(--color-success);
 }
-.cb-left { display: flex; align-items: center; gap: 12px; }
-.custom-cb { width: 18px; height: 18px; accent-color: var(--color-success); cursor: pointer; }
-.p-name { font-weight: 600; color: var(--color-text); }
-.p-nominal { font-weight: 600; color: var(--color-text-muted); font-size: 0.9rem; }
+.cb-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.custom-cb { width: 18px; height: 18px; accent-color: var(--color-success); cursor: pointer; flex-shrink: 0; }
+.p-name { font-weight: 600; color: var(--color-text); word-break: break-word; }
+.p-nominal { font-weight: 600; color: var(--color-text-muted); font-size: 0.9rem; white-space: nowrap; flex-shrink: 0; }
 
 .total-summary-card {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
@@ -898,8 +899,10 @@ async function cancelPayment(paymentId, periodName) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-.ts-label { font-weight: 700; color: var(--color-success); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+.ts-label { font-weight: 700; color: var(--color-success); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap; }
 .ts-value { font-size: 1.25rem; font-weight: 800; color: var(--color-text); }
 .ts-sub { font-size: 0.85rem; font-weight: 500; color: var(--color-text-muted); }
 
@@ -1164,6 +1167,81 @@ async function cancelPayment(paymentId, periodName) {
 
   .field-label {
     margin-bottom: 4px;
+  }
+
+  /* ---- Modal fixes on mobile ---- */
+
+  /* Period checkbox: ensure nama tidak wrap aneh, nominal tetap di kanan */
+  .period-checkbox-list {
+    max-height: 200px;
+  }
+
+  .period-checkbox-card {
+    padding: 10px 12px;
+  }
+
+  .p-name {
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+
+  .p-nominal {
+    font-size: 0.85rem;
+  }
+
+  /* Total summary card: stack label & value secara vertikal di mobile kecil */
+  .total-summary-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px;
+  }
+
+  .ts-value {
+    font-size: 1.15rem;
+  }
+
+  /* Form row inside modal: stack vertically */
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* Modal footer buttons: full width stack */
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .modal-footer .btn,
+  .modal-footer .btn-ghost,
+  .modal-footer .btn-success-solid {
+    width: 100% !important;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .modal-body {
+    max-height: calc(100vh - 180px);
+  }
+
+  /* Locked user card: nama tidak terpotong */
+  .locked-user-card {
+    padding: 10px 12px;
+  }
+
+  .user-name-text {
+    font-size: 0.92rem;
+  }
+
+  /* Arrears warning card: stack di mobile */
+  .arrears-warning-card {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .awc-btn {
+    width: 100%;
   }
 }
 </style>
