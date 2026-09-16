@@ -104,21 +104,21 @@
         <table class="simple-table">
           <thead>
             <tr>
-            <th>Nama</th>
-            <th>Periode</th>
-            <th>Nominal</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="m in unpaidMembers.slice(0, 5)" :key="m.id">
-            <td class="fw-medium">{{ m.nama }}</td>
-            <td class="text-muted">{{ latestPeriodName }}</td>
-            <td>{{ formatCurrency(latestPeriodNominal) }}</td>
-            <td><span class="badge-status belum">Belum Bayar</span></td>
-          </tr>
-        </tbody>
-      </table>
+              <th style="text-align:center;">Nama</th>
+              <th style="text-align:center;">Periode</th>
+              <th style="text-align:center;">Nominal</th>
+              <th style="text-align:center;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="m in unpaidMembers.slice(0, 5)" :key="m.id">
+              <td class="fw-medium">{{ m.nama }}</td>
+              <td class="text-muted">{{ latestPeriodName }}</td>
+              <td style="text-align:center;">{{ formatCurrency(latestPeriodNominal) }}</td>
+              <td style="text-align:center;"><span class="badge-status belum">Belum Bayar</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
