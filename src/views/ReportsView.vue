@@ -133,11 +133,11 @@
                 <td colspan="5" class="empty-cell">Tidak ada transaksi untuk periode ini.</td>
               </tr>
               <tr v-for="t in filteredTxns" :key="t.id">
-                <td class="text-muted small">{{ formatShortDate(t.date) }}</td>
-                <td>{{ t.description }}</td>
-                <td><span class="badge-type" :class="t.type === 'income' ? 'in' : 'out'">{{ t.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</span></td>
-                <td class="text-muted small">{{ getCategoryName(t.categoryId) }}</td>
-                <td style="text-align:right;" class="fw-bold" :class="t.type === 'income' ? 'amount-in' : 'amount-out'">
+                <td data-label="Tanggal" class="text-muted small">{{ formatShortDate(t.date) }}</td>
+                <td data-label="Keterangan">{{ t.description }}</td>
+                <td data-label="Jenis"><span class="badge-type" :class="t.type === 'income' ? 'in' : 'out'">{{ t.type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</span></td>
+                <td data-label="Kategori" class="text-muted small">{{ getCategoryName(t.categoryId) }}</td>
+                <td data-label="Nominal" class="fw-bold" :class="t.type === 'income' ? 'amount-in' : 'amount-out'">
                   {{ t.type === 'income' ? '+' : '-' }}{{ formatCurrency(t.amount) }}
                 </td>
               </tr>
@@ -170,11 +170,11 @@
                 <td colspan="5" class="empty-cell">Belum ada data anggota.</td>
               </tr>
             <tr v-for="(m, i) in rekapAnggota" :key="m.id">
-              <td class="text-muted">{{ i + 1 }}</td>
-              <td class="fw-medium">{{ m.nama }}</td>
-              <td style="text-align:right;" class="amount-in fw-medium">+{{ formatCurrency(m.totalBayar) }}</td>
-              <td style="text-align:right;" class="amount-out fw-medium">-{{ formatCurrency(m.totalTarik) }}</td>
-              <td style="text-align:right;" class="fw-bold" :class="m.saldo < 0 ? 'amount-out' : (m.saldo > 0 ? 'text-primary' : 'text-muted')">
+              <td data-label="No" class="text-muted">{{ i + 1 }}</td>
+              <td data-label="Nama">{{ m.nama }}</td>
+              <td data-label="Setoran" class="amount-in fw-medium">+{{ formatCurrency(m.totalBayar) }}</td>
+              <td data-label="Penarikan" class="amount-out fw-medium">-{{ formatCurrency(m.totalTarik) }}</td>
+              <td data-label="Saldo" class="fw-bold" :class="m.saldo < 0 ? 'amount-out' : (m.saldo > 0 ? 'text-primary' : 'text-muted')">
                 {{ formatCurrency(m.saldo) }}
               </td>
             </tr>
@@ -551,6 +551,10 @@ function doExportPDF() {
     padding: 16px;
   }
 
+  .s-val {
+    font-size: 1.05rem;
+  }
+
   .charts-row {
     flex-direction: column;
   }
@@ -558,6 +562,100 @@ function doExportPDF() {
   .flex-2, .flex-1 {
     width: 100%;
     flex: unset;
+  }
+
+  /* ---- BUKU KAS TABLE → Card list di mobile ---- */
+  /* Sembunyikan thead tabel buku kas */
+  .table-responsive table.data-table thead {
+    display: none;
+  }
+
+  /* Setiap baris jadi card */
+  .table-responsive table.data-table,
+  .table-responsive table.data-table tbody,
+  .table-responsive table.data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .table-responsive table.data-table tbody tr {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .table-responsive table.data-table tbody tr:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Sembunyikan semua td dulu, tampilkan per kolom secara manual */
+  .table-responsive table.data-table tbody td {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0;
+    border-bottom: none;
+    font-size: 0.875rem;
+    white-space: normal !important;
+    word-break: break-word;
+  }
+
+  /* Label sebelum setiap td via data-label (ditambah di bawah) */
+  .table-responsive table.data-table tbody td::before {
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-text-dim);
+    white-space: nowrap;
+    min-width: 80px;
+    padding-top: 2px;
+  }
+
+  /* td yang tidak punya data-label: tidak tampilkan label kosong */
+  .table-responsive table.data-table tbody td[data-label=""] {
+    display: none;
+  }
+
+  /* Khusus kolom empty-cell: tetap tampil normal */
+  .table-responsive table.data-table tbody td.empty-cell {
+    display: block;
+    text-align: center;
+    padding: 24px;
+  }
+  .table-responsive table.data-table tbody td.empty-cell::before {
+    display: none;
+  }
+
+  /* Nominal: rata kanan tetap tapi sekarang dalam flex row */
+  .table-responsive table.data-table tbody td[style*="text-align:right"] {
+    text-align: left !important;
+  }
+
+  /* tfoot: sembunyikan di mobile */
+  .table-responsive table.data-table tfoot {
+    display: none;
+  }
+
+  /* Padding card-nya diperkecil */
+  .card {
+    padding: 14px;
+  }
+
+  .card-header {
+    margin-bottom: 12px;
+  }
+
+  /* Main tabs: font lebih kecil di mobile */
+  .m-tab {
+    padding: 10px 12px;
+    font-size: 0.82rem;
   }
 }
 
@@ -567,3 +665,4 @@ function doExportPDF() {
   }
 }
 </style>
+
