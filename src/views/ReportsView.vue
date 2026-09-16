@@ -496,7 +496,7 @@ function doExportPDF() {
 
 .count-badge { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; color: var(--color-text-muted); white-space: nowrap; flex-shrink: 0; }
 
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; white-space: nowrap; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .data-table th { text-align: left; padding: 10px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--color-text-dim); background: var(--color-surface-2); border-bottom: 1px solid var(--color-border); }
 .data-table td { padding: 11px 16px; border-bottom: 1px solid var(--color-border); }
 .data-table tr:last-child td { border-bottom: none; }
