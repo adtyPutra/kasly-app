@@ -172,9 +172,9 @@
             <tr v-for="(m, i) in rekapAnggota" :key="m.id">
               <td data-label="No" class="text-muted">{{ i + 1 }}</td>
               <td data-label="Nama">{{ m.nama }}</td>
-              <td data-label="Setoran" class="amount-in fw-medium">+{{ formatCurrency(m.totalBayar) }}</td>
-              <td data-label="Penarikan" class="amount-out fw-medium">-{{ formatCurrency(m.totalTarik) }}</td>
-              <td data-label="Saldo" class="fw-bold" :class="m.saldo < 0 ? 'amount-out' : (m.saldo > 0 ? 'text-primary' : 'text-muted')">
+              <td data-label="Setoran" style="text-align:right;" class="amount-in fw-medium">+{{ formatCurrency(m.totalBayar) }}</td>
+              <td data-label="Penarikan" style="text-align:right;" class="amount-out fw-medium">-{{ formatCurrency(m.totalTarik) }}</td>
+              <td data-label="Saldo" style="text-align:right;" class="fw-bold" :class="m.saldo < 0 ? 'amount-out' : (m.saldo > 0 ? 'text-primary' : 'text-muted')">
                 {{ formatCurrency(m.saldo) }}
               </td>
             </tr>
