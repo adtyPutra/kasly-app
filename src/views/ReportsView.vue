@@ -481,8 +481,8 @@ function doExportPDF() {
 .flex-1 { flex: 1; }
 
 .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.card-title { font-size: 0.95rem; font-weight: 600; color: var(--color-text); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: nowrap; }
+.card-title { font-size: 0.95rem; font-weight: 600; color: var(--color-text); flex: 1; min-width: 0; }
 
 .legend-row { display: flex; align-items: center; font-size: 0.78rem; color: var(--color-text-muted); }
 .leg-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
@@ -494,7 +494,7 @@ function doExportPDF() {
 .fw-bold { font-weight: 700; }
 .text-primary { color: var(--color-primary-dark); }
 
-.count-badge { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; color: var(--color-text-muted); }
+.count-badge { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; color: var(--color-text-muted); white-space: nowrap; flex-shrink: 0; }
 
 .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; white-space: nowrap; }
 .data-table th { text-align: left; padding: 10px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--color-text-dim); background: var(--color-surface-2); border-bottom: 1px solid var(--color-border); }
