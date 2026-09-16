@@ -181,7 +181,7 @@
           </tbody>
           <tfoot>
             <tr class="tfoot-row">
-              <td colspan="2" class="fw-bold">TOTAL KESELURUHAN:</td>
+              <td colspan="2" style="text-align:right;" class="fw-bold">TOTAL KESELURUHAN:</td>
               <td style="text-align:right;" class="fw-bold amount-in">+{{ formatCurrency(totalSemuaSetoran) }}</td>
               <td style="text-align:right;" class="fw-bold amount-out">-{{ formatCurrency(totalSemuaTarikan) }}</td>
               <td style="text-align:right;" class="fw-bold text-primary">{{ formatCurrency(totalSemuaSaldo) }}</td>
